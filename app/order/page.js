@@ -188,7 +188,7 @@ export default function OrderPage() {
                   </p>
 
                   <p className="text-3xl font-black text-[#0b4fd8]">
-                    083894453655
+                    08984471677
                   </p>
                 </div>
               )}
@@ -200,7 +200,7 @@ export default function OrderPage() {
                   </p>
 
                   <p className="text-3xl font-black text-[#0b4fd8]">
-                    083894453655
+                    08984471677
                   </p>
                 </div>
               )}
