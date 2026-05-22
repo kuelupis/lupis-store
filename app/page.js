@@ -8,11 +8,13 @@ export default function Home() {
   const [user, setUser] = useState(null);
   const [products, setProducts] = useState([]);
   const [reviews, setReviews] = useState([]);
+  const [visits, setVisits] = useState(0);
 
   useEffect(() => {
     getUser();
     loadProducts();
     loadReviews();
+    updateVisits();
   }, []);
 
   async function getUser() {
@@ -37,6 +39,25 @@ export default function Home() {
       .limit(6);
 
     setReviews(data || []);
+  }
+
+  async function updateVisits() {
+    const { data } = await supabase
+      .from("website_stats")
+      .select("*")
+      .eq("id", 1)
+      .single();
+
+    if (data) {
+      const newVisits = Number(data.visits) + 1;
+
+      setVisits(newVisits);
+
+      await supabase
+        .from("website_stats")
+        .update({ visits: newVisits })
+        .eq("id", 1);
+    }
   }
 
   function orderProduct(product) {
@@ -108,9 +129,15 @@ export default function Home() {
             <div className="absolute right-[-60px] top-[-60px] w-56 h-56 bg-white/15 rounded-full" />
             <div className="absolute right-20 bottom-[-70px] w-44 h-44 bg-white/10 rounded-full" />
 
-            <p className="font-bold bg-white/20 w-fit px-4 py-2 rounded-full mb-5">
-              Fast • Trusted • Friendly
-            </p>
+            <div className="flex flex-wrap gap-3 mb-5">
+              <p className="font-bold bg-white/20 w-fit px-4 py-2 rounded-full">
+                Fast • Trusted • Friendly
+              </p>
+
+              <p className="font-bold bg-black/20 w-fit px-4 py-2 rounded-full">
+                👁 {visits} Website Visits
+              </p>
+            </div>
 
             <h2 className="text-4xl md:text-5xl font-black leading-tight">
               LupiszStore Marketplace
@@ -244,9 +271,7 @@ export default function Home() {
                     {"⭐".repeat(review.rating)}
                   </div>
 
-                  <p className="text-slate-700 mt-4">
-                    "{review.review}"
-                  </p>
+                  <p className="text-slate-700 mt-4">"{review.review}"</p>
 
                   <div className="mt-5">
                     <p className="font-black">{review.product_name}</p>
