@@ -39,11 +39,8 @@ export default function AdminPage() {
       .update({ status })
       .eq("id", id);
 
-    if (error) {
-      alert(error.message);
-    } else {
-      loadOrders();
-    }
+    if (error) alert(error.message);
+    else loadOrders();
   }
 
   const stats = useMemo(() => {
@@ -66,78 +63,53 @@ export default function AdminPage() {
   return (
     <main className="min-h-screen bg-[#eef4ff] p-6">
       <div className="max-w-7xl mx-auto">
-
         <div className="bg-gradient-to-r from-[#0b4fd8] to-[#5865F2] text-white rounded-[32px] p-8 shadow-xl mb-8">
-          <p className="text-white/70 font-bold">
-            LupiszStore
-          </p>
-
-          <h1 className="text-4xl font-black mt-2">
-            Admin Dashboard
-          </h1>
-
+          <p className="text-white/70 font-bold">LupiszStore</p>
+          <h1 className="text-4xl font-black mt-2">Admin Dashboard</h1>
           <p className="text-white/80 mt-2">
             Kelola order customer dan chat admin.
           </p>
         </div>
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
-
           <div className="bg-white rounded-[28px] p-6 shadow">
-            <p className="text-slate-500 font-bold">
-              Total Order
-            </p>
-
+            <p className="text-slate-500 font-bold">Total Order</p>
             <h2 className="text-4xl font-black mt-3 text-[#0b4fd8]">
               {stats.total}
             </h2>
           </div>
 
           <div className="bg-white rounded-[28px] p-6 shadow">
-            <p className="text-slate-500 font-bold">
-              Pending
-            </p>
-
+            <p className="text-slate-500 font-bold">Pending</p>
             <h2 className="text-4xl font-black mt-3 text-gray-500">
               {stats.pending}
             </h2>
           </div>
 
           <div className="bg-white rounded-[28px] p-6 shadow">
-            <p className="text-slate-500 font-bold">
-              Process
-            </p>
-
+            <p className="text-slate-500 font-bold">Process</p>
             <h2 className="text-4xl font-black mt-3 text-yellow-500">
               {stats.process}
             </h2>
           </div>
 
           <div className="bg-white rounded-[28px] p-6 shadow">
-            <p className="text-slate-500 font-bold">
-              Done
-            </p>
-
+            <p className="text-slate-500 font-bold">Done</p>
             <h2 className="text-4xl font-black mt-3 text-green-500">
               {stats.done}
             </h2>
           </div>
-
         </div>
 
         <div className="grid gap-6">
-
           {orders.map((order) => (
             <div
               key={order.id}
               className="bg-white rounded-[30px] shadow-xl border border-blue-50 p-6"
             >
               <div className="flex flex-col lg:flex-row gap-6 justify-between">
-
                 <div className="flex-1">
-
                   <div className="flex flex-wrap gap-3 items-center mb-3">
-
                     <p className="text-sm text-slate-500">
                       Order #{order.id}
                     </p>
@@ -149,7 +121,6 @@ export default function AdminPage() {
                     >
                       {order.status}
                     </span>
-
                   </div>
 
                   <h2 className="text-3xl font-black">
@@ -157,42 +128,57 @@ export default function AdminPage() {
                   </h2>
 
                   <div className="grid sm:grid-cols-2 gap-4 mt-5">
+                    {order.server_link ? (
+                      <>
+                        <div className="bg-blue-50 rounded-2xl p-4">
+                          <p className="text-slate-500 text-sm">
+                            Link Server Discord
+                          </p>
+                          <p className="font-black text-lg break-all">
+                            {order.server_link}
+                          </p>
+                        </div>
+
+                        <div className="bg-blue-50 rounded-2xl p-4">
+                          <p className="text-slate-500 text-sm">
+                            Jenis Paket
+                          </p>
+                          <p className="font-black text-lg">
+                            {order.package_type}
+                          </p>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="bg-blue-50 rounded-2xl p-4">
+                          <p className="text-slate-500 text-sm">
+                            Username Roblox
+                          </p>
+                          <p className="font-black text-lg">
+                            {order.roblox_username}
+                          </p>
+                        </div>
+
+                        <div className="bg-blue-50 rounded-2xl p-4">
+                          <p className="text-slate-500 text-sm">
+                            Display Name
+                          </p>
+                          <p className="font-black text-lg">
+                            {order.roblox_display}
+                          </p>
+                        </div>
+                      </>
+                    )}
 
                     <div className="bg-blue-50 rounded-2xl p-4">
-                      <p className="text-slate-500 text-sm">
-                        Username Roblox
-                      </p>
-
-                      <p className="font-black text-lg">
-                        {order.roblox_username}
-                      </p>
-                    </div>
-
-                    <div className="bg-blue-50 rounded-2xl p-4">
-                      <p className="text-slate-500 text-sm">
-                        Display Name
-                      </p>
-
-                      <p className="font-black text-lg">
-                        {order.roblox_display}
-                      </p>
-                    </div>
-
-                    <div className="bg-blue-50 rounded-2xl p-4">
-                      <p className="text-slate-500 text-sm">
-                        Payment
-                      </p>
-
+                      <p className="text-slate-500 text-sm">Payment</p>
                       <p className="font-black text-lg">
                         {order.payment_method}
                       </p>
                     </div>
 
                     <div className="bg-blue-50 rounded-2xl p-4">
-                      <p className="text-slate-500 text-sm">
-                        Tanggal
-                      </p>
-
+                      <p className="text-slate-500 text-sm">Tanggal</p>
                       <p className="font-black text-lg">
                         {order.created_at
                           ? new Date(order.created_at).toLocaleString("id-ID")
@@ -200,57 +186,35 @@ export default function AdminPage() {
                       </p>
                     </div>
 
+                    {order.notes && (
+                      <div className="bg-blue-50 rounded-2xl p-4 sm:col-span-2">
+                        <p className="text-slate-500 text-sm">
+                          Catatan Tambahan
+                        </p>
+                        <p className="font-black text-lg">{order.notes}</p>
+                      </div>
+                    )}
                   </div>
 
                   <div className="flex flex-wrap gap-3 mt-6">
-
-                    <button
-                      onClick={() => updateStatus(order.id, "pending")}
-                      className="bg-gray-500 text-white px-5 py-3 rounded-2xl font-bold"
-                    >
-                      Pending
-                    </button>
-
-                    <button
-                      onClick={() => updateStatus(order.id, "paid")}
-                      className="bg-blue-500 text-white px-5 py-3 rounded-2xl font-bold"
-                    >
-                      Paid
-                    </button>
-
-                    <button
-                      onClick={() => updateStatus(order.id, "process")}
-                      className="bg-yellow-500 text-white px-5 py-3 rounded-2xl font-bold"
-                    >
-                      Process
-                    </button>
-
-                    <button
-                      onClick={() => updateStatus(order.id, "done")}
-                      className="bg-green-500 text-white px-5 py-3 rounded-2xl font-bold"
-                    >
-                      Done
-                    </button>
-
-                    <button
-                      onClick={() => updateStatus(order.id, "cancel")}
-                      className="bg-red-500 text-white px-5 py-3 rounded-2xl font-bold"
-                    >
-                      Cancel
-                    </button>
-
+                    {["pending", "paid", "process", "done", "cancel"].map(
+                      (status) => (
+                        <button
+                          key={status}
+                          onClick={() => updateStatus(order.id, status)}
+                          className="bg-[#0b4fd8] text-white px-5 py-3 rounded-2xl font-bold"
+                        >
+                          {status}
+                        </button>
+                      )
+                    )}
                   </div>
-
                 </div>
 
                 <div className="w-full lg:w-[300px]">
-
                   {order.payment_proof ? (
                     <div className="bg-slate-50 rounded-[28px] p-4 border">
-
-                      <p className="font-black mb-3">
-                        Bukti Transfer
-                      </p>
+                      <p className="font-black mb-3">Bukti Transfer</p>
 
                       <img
                         src={order.payment_proof}
@@ -265,7 +229,6 @@ export default function AdminPage() {
                       >
                         Lihat Full
                       </a>
-
                     </div>
                   ) : (
                     <div className="bg-slate-50 rounded-[28px] p-6 text-center border">
@@ -283,13 +246,10 @@ export default function AdminPage() {
                   >
                     Buka Chat Customer
                   </button>
-
                 </div>
-
               </div>
             </div>
           ))}
-
         </div>
       </div>
     </main>

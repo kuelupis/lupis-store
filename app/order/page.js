@@ -7,12 +7,22 @@ export default function OrderPage() {
   const [user, setUser] = useState(null);
   const [product, setProduct] = useState("");
   const [price, setPrice] = useState("");
+
   const [username, setUsername] = useState("");
   const [displayName, setDisplayName] = useState("");
   const [privateServer, setPrivateServer] = useState("");
+
+  const [serverLink, setServerLink] = useState("");
+  const [packageType, setPackageType] = useState("Basic");
+  const [notes, setNotes] = useState("");
+
   const [payment, setPayment] = useState("QRIS");
   const [proofFile, setProofFile] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  const isDiscordSetup = product
+    .toLowerCase()
+    .includes("setup server discord");
 
   useEffect(() => {
     async function checkUser() {
@@ -27,7 +37,6 @@ export default function OrderPage() {
       setUser(data.user);
 
       const params = new URLSearchParams(window.location.search);
-
       setProduct(params.get("product") || "");
       setPrice(params.get("price") || "");
     }
@@ -62,9 +71,16 @@ export default function OrderPage() {
       return;
     }
 
-    if (!username || !displayName) {
-      alert("Lengkapi data Roblox");
-      return;
+    if (isDiscordSetup) {
+      if (!serverLink) {
+        alert("Link server Discord wajib diisi");
+        return;
+      }
+    } else {
+      if (!username || !displayName) {
+        alert("Username dan Display Name Roblox wajib diisi");
+        return;
+      }
     }
 
     if (!proofFile) {
@@ -87,9 +103,14 @@ export default function OrderPage() {
         {
           user_id: user.id,
           product_name: product,
-          roblox_username: username,
-          roblox_display: displayName,
-          private_server: privateServer,
+          roblox_username: isDiscordSetup ? null : username,
+          roblox_display: isDiscordSetup ? null : displayName,
+          private_server: isDiscordSetup ? null : privateServer,
+
+          server_link: isDiscordSetup ? serverLink : null,
+          package_type: isDiscordSetup ? packageType : null,
+          notes: notes,
+
           payment_method: payment,
           payment_proof: proofUrl,
           status: "pending",
@@ -109,48 +130,74 @@ export default function OrderPage() {
   return (
     <main className="min-h-screen bg-[#eef4ff] p-6">
       <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-6">
-
         <div className="bg-white rounded-[32px] shadow-xl p-8 h-fit">
-
           <p className="text-[#0b4fd8] font-bold mb-2">
             FORM ORDER
           </p>
 
-          <h1 className="text-4xl font-black">
-            {product}
-          </h1>
+          <h1 className="text-4xl font-black">{product}</h1>
 
           <p className="text-3xl font-black text-[#0b4fd8] mt-3">
             {price}
           </p>
 
           <div className="mt-8 space-y-4">
+            {isDiscordSetup ? (
+              <>
+                <input
+                  placeholder="Link Server Discord"
+                  className="w-full border border-blue-100 bg-blue-50 p-4 rounded-2xl outline-none focus:border-[#0b4fd8]"
+                  onChange={(e) => setServerLink(e.target.value)}
+                />
 
-            <input
-              placeholder="Username Roblox"
-              className="w-full border border-blue-100 bg-blue-50 p-4 rounded-2xl outline-none focus:border-[#0b4fd8]"
-              onChange={(e) => setUsername(e.target.value)}
-            />
+                <select
+                  value={packageType}
+                  onChange={(e) => setPackageType(e.target.value)}
+                  className="w-full border border-blue-100 bg-blue-50 p-4 rounded-2xl outline-none focus:border-[#0b4fd8]"
+                >
+                  <option value="Basic">Basic</option>
+                  <option value="Medium">Medium</option>
+                  <option value="Advanced">Advanced</option>
+                </select>
 
-            <input
-              placeholder="Display Name Roblox"
-              className="w-full border border-blue-100 bg-blue-50 p-4 rounded-2xl outline-none focus:border-[#0b4fd8]"
-              onChange={(e) => setDisplayName(e.target.value)}
-            />
+                <textarea
+                  placeholder="Catatan tambahan, contoh: tema server, warna, kategori khusus, role khusus, dll"
+                  className="w-full border border-blue-100 bg-blue-50 p-4 rounded-2xl outline-none focus:border-[#0b4fd8] h-32"
+                  onChange={(e) => setNotes(e.target.value)}
+                />
+              </>
+            ) : (
+              <>
+                <input
+                  placeholder="Username Roblox"
+                  className="w-full border border-blue-100 bg-blue-50 p-4 rounded-2xl outline-none focus:border-[#0b4fd8]"
+                  onChange={(e) => setUsername(e.target.value)}
+                />
 
-            <input
-              placeholder="Private Server (Opsional)"
-              className="w-full border border-blue-100 bg-blue-50 p-4 rounded-2xl outline-none focus:border-[#0b4fd8]"
-              onChange={(e) => setPrivateServer(e.target.value)}
-            />
+                <input
+                  placeholder="Display Name Roblox"
+                  className="w-full border border-blue-100 bg-blue-50 p-4 rounded-2xl outline-none focus:border-[#0b4fd8]"
+                  onChange={(e) => setDisplayName(e.target.value)}
+                />
 
+                <input
+                  placeholder="Private Server Roblox (Opsional)"
+                  className="w-full border border-blue-100 bg-blue-50 p-4 rounded-2xl outline-none focus:border-[#0b4fd8]"
+                  onChange={(e) => setPrivateServer(e.target.value)}
+                />
+
+                <textarea
+                  placeholder="Catatan tambahan (opsional)"
+                  className="w-full border border-blue-100 bg-blue-50 p-4 rounded-2xl outline-none focus:border-[#0b4fd8] h-28"
+                  onChange={(e) => setNotes(e.target.value)}
+                />
+              </>
+            )}
           </div>
         </div>
 
         <div className="space-y-6">
-
           <div className="bg-white rounded-[32px] shadow-xl p-8">
-
             <h2 className="text-2xl font-black mb-5">
               Payment Method
             </h2>
@@ -166,7 +213,6 @@ export default function OrderPage() {
             </select>
 
             <div className="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-100 rounded-[28px] p-6">
-
               {payment === "QRIS" && (
                 <div className="text-center">
                   <p className="font-black text-[#0b4fd8] text-lg mb-4">
@@ -210,18 +256,15 @@ export default function OrderPage() {
                   JANGAN LUPA SCREENSHOT BUKTI TRANSFER
                 </p>
               </div>
-
             </div>
           </div>
 
           <div className="bg-white rounded-[32px] shadow-xl p-8">
-
             <h2 className="text-2xl font-black mb-5">
               Upload Bukti Transfer
             </h2>
 
             <label className="border-2 border-dashed border-blue-200 bg-blue-50 rounded-[28px] p-8 flex flex-col items-center justify-center cursor-pointer text-center">
-
               <p className="font-bold text-[#0b4fd8]">
                 Klik untuk upload gambar
               </p>
@@ -251,11 +294,8 @@ export default function OrderPage() {
             >
               {loading ? "MEMBUAT ORDER..." : "BUAT ORDER"}
             </button>
-
           </div>
-
         </div>
-
       </div>
     </main>
   );
